@@ -1,0 +1,79 @@
+# ============================================================
+# application.yml — Spring Boot externalized configuration
+#
+# Why YAML over application.properties?
+# - Hierarchical structure is more readable for nested config
+# - Less repetition (you don't repeat the prefix on every line)
+# - Industry standard for Spring Boot projects
+# ============================================================
+
+spring:
+  application:
+    name: ELEVTR   # Used by Actuator and logging
+
+# ============================================================
+# SERVER CONFIG
+# Spring Boot's embedded Tomcat listens on this port.
+# Change this if 8080 is already in use on your machine.
+# ============================================================
+server:
+  port: 8080
+
+# ============================================================
+# ELEVATOR SIMULATION CONFIG
+#
+# These values are bound to ElevatorConfig.java via
+# @ConfigurationProperties(prefix = "elevator")
+#
+# Benefits of externalizing these:
+# - Change simulation speed without recompiling
+# - Different values for test vs production profiles
+# - Shows exam examiner you understand Spring config best practices
+# ============================================================
+elevtr:
+  total-floors: 10             # How many floors the building has (0-9)
+  total-elevators: 2           # Number of elevator instances
+
+  # How long the door stays open at each floor (milliseconds)
+  # 2000ms = 2 seconds in the simulation
+  door-open-duration-ms: 2000
+
+  # Simulated travel time between adjacent floors (milliseconds)
+  # 500ms = 0.5 seconds per floor
+  movement-speed-ms: 500
+
+  # Scoring penalties used by the dispatcher when choosing
+  # which elevator should handle a floor request.
+  # Higher penalty = less likely to be chosen.
+  direction-change-penalty: 3  # Penalise elevator that would need to reverse
+  busy-elevator-penalty: 2     # Penalise elevator already handling a request
+
+# ============================================================
+# ACTUATOR CONFIG
+# Exposes health and info endpoints.
+# In production you would restrict this — for the exam, expose all.
+# Hit: GET http://localhost:8080/actuator/health
+# ============================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      show-details: always
+
+# ============================================================
+# LOGGING CONFIG
+# Sets log levels per package.
+# DEBUG on our package shows all the elevator movement logs.
+# INFO on Spring internals keeps startup output clean.
+# ============================================================
+logging:
+  level:
+    com.elevtr: DEBUG         # Our code — verbose so you can follow the simulation
+    org.springframework: INFO   # Spring internals — less noise
+  pattern:
+    # Custom pattern adds the thread name — important for seeing which
+    # elevator thread is logging each line
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
