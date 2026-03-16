@@ -8,7 +8,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.example.elevtr.model.FloorRequest;
 import com.example.elevtr.service.FloorRequestService;
 import com.example.elevtr.service.ElevtrService;
 import lombok.RequiredArgsConstructor;
